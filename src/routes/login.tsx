@@ -4,7 +4,6 @@ import { z } from "zod";
 import { motion } from "framer-motion";
 import { Button } from "@/components/wf/Button";
 import { supabase } from "@/integrations/supabase/client";
-import { lovable } from "@/integrations/lovable";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/login")({
@@ -43,12 +42,6 @@ function LoginPage() {
     navigate({ to: "/app" });
   };
 
-  const onGoogle = async () => {
-    const result = await lovable.auth.signInWithOAuth("google", {
-      redirect_uri: window.location.origin + "/app",
-    });
-    if (result.error) toast.error(result.error.message ?? "Google sign-in failed");
-  };
 
   return (
     <main className="mx-auto min-h-screen max-w-md px-6 pt-16">
@@ -82,13 +75,8 @@ function LoginPage() {
       </form>
 
       <div className="my-6 flex items-center gap-3">
-        <div className="h-px flex-1 bg-border" />
-        <span className="text-[10px] uppercase tracking-widest text-text-dim">or</span>
-        <div className="h-px flex-1 bg-border" />
       </div>
 
-      <Button variant="outline" size="lg" full onClick={onGoogle} type="button">
-        Continue with Google
       </Button>
 
       <p className="mt-8 text-center text-sm text-text-second">
