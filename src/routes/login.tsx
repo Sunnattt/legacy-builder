@@ -103,7 +103,7 @@ function LoginPage() {
                 disabled={googleLoading}
                 className="flex h-12 w-full items-center justify-center gap-3 rounded-lg border border-border bg-surface-mid font-semibold text-text-primary transition-colors hover:bg-surface-high disabled:opacity-60"
               >
-                <GoogleIcon />
+                <GoogleMark />
                 {googleLoading ? "Redirecting…" : "Continue with Google"}
               </button>
 
