@@ -54,12 +54,14 @@ function AddTxPage() {
   };
 
   const submit = () => {
-    const n = parseCurrencyInput(amount);
-    if (n <= 0) {
+    const entered = parseCurrencyInput(amount);
+    if (entered <= 0) {
       setShake((s) => s + 1);
       haptic("error");
       return;
     }
+    // Persist in base currency (USD) so display can convert to any currency.
+    const n = convertToBase(entered, currency);
     add({
       type,
       amount: n,
