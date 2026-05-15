@@ -20,6 +20,14 @@ export const Route = createFileRoute("/app")({
 });
 
 function AppShell() {
+  const hydrate = useSettingsStore((s) => s.hydrateFromCloud);
+  useEffect(() => {
+    void hydrate();
+    const { data: sub } = supabase.auth.onAuthStateChange((_e, session) => {
+      if (session) void hydrate();
+    });
+    return () => sub.subscription.unsubscribe();
+  }, [hydrate]);
   return (
     <div className="mx-auto min-h-screen max-w-md pb-24">
       <Outlet />
