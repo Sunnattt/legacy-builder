@@ -2,11 +2,12 @@ import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
 import { z } from "zod";
 import { motion } from "framer-motion";
-import { Crown, Mail, Lock, Sparkles } from "lucide-react";
+import { Crown, Mail, Lock } from "lucide-react";
 import { Button } from "@/components/wf/Button";
 import { supabase } from "@/integrations/supabase/client";
 import { lovable } from "@/integrations/lovable";
 import { toast } from "sonner";
+import { HeroPanel, BackgroundOrbs, GoogleIcon } from "@/components/wf/AuthHero";
 
 export const Route = createFileRoute("/login")({
   head: () => ({
