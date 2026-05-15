@@ -13,7 +13,7 @@ export const Route = createFileRoute("/app/profile")({
 
 function Profile() {
   const navigate = useNavigate();
-  const { privacyMode, togglePrivacy, currency } = useSettingsStore();
+  const { privacyMode, togglePrivacy } = useSettingsStore();
   const [email, setEmail] = useState<string | null>(null);
   const [name, setName] = useState<string>("");
 
