@@ -12,13 +12,12 @@ import { supabase } from "@/integrations/supabase/client";
 import { useSettingsStore } from "@/store/useSettingsStore";
 import { useTransactionStore } from "@/store/useTransactionStore";
 import { useGoalStore } from "@/store/useGoalStore";
+import { CURRENCIES } from "@/lib/currency";
 
 export const Route = createFileRoute("/app/settings")({
   head: () => ({ meta: [{ title: "Settings — WealthFlow" }] }),
   component: Settings,
 });
-
-import { CURRENCIES } from "@/lib/currency";
 
 function Settings() {
   const navigate = useNavigate();
