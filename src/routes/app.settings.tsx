@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import {
   ChevronLeft, User, DollarSign, EyeOff, Bell, Database,
-  LogOut, Crown, Trash2, Sparkles, ChevronRight,
+  LogOut, Crown, Trash2, Sparkles, ChevronRight, Search, Check,
 } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/wf/Button";
