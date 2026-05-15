@@ -74,11 +74,6 @@ function LoginPage() {
         </Button>
       </form>
 
-      <div className="my-6 flex items-center gap-3">
-      </div>
-
-      </Button>
-
       <p className="mt-8 text-center text-sm text-text-second">
         New here? <Link to="/signup" className="text-gold">Create an account</Link>
       </p>
