@@ -4,13 +4,20 @@ import { motion } from "framer-motion";
 import { cn } from "@/lib/utils";
 import { haptic } from "@/lib/haptics";
 
-const items = [
+type TabItem = {
+  to: "/app" | "/app/goals" | "/app/add" | "/app/analytics" | "/app/profile";
+  label: string;
+  icon: typeof Home;
+  exact?: boolean;
+  primary?: boolean;
+};
+const items: TabItem[] = [
   { to: "/app", label: "Home", icon: Home, exact: true },
   { to: "/app/goals", label: "Goals", icon: Target },
   { to: "/app/add", label: "Add", icon: Plus, primary: true },
   { to: "/app/analytics", label: "Stats", icon: BarChart3 },
   { to: "/app/profile", label: "Profile", icon: User },
-] as const;
+];
 
 export function TabBar() {
   const loc = useLocation();
