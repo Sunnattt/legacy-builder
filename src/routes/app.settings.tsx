@@ -107,30 +107,13 @@ function Settings() {
         <p className="text-xs text-text-second">
           Switches every amount across the app instantly.
         </p>
-        <div className="mt-3 grid grid-cols-2 gap-2">
-          {CURRENCIES.map((c) => {
-            const active = currency === c.code;
-            return (
-              <button
-                key={c.code}
-                onClick={() => {
-                  setCurrency(c.code);
-                  toast.success(`Currency set to ${c.code}`);
-                }}
-                className={`flex items-center justify-between rounded-lg border px-3 py-2.5 text-left transition-all ${
-                  active
-                    ? "border-transparent bg-gradient-gold text-[#07070E]"
-                    : "border-border bg-surface-mid text-text-primary hover:border-[var(--gold-dim)]"
-                }`}
-              >
-                <span className="text-sm font-bold">{c.code}</span>
-                <span className={`text-[10px] ${active ? "text-[#07070E]/70" : "text-text-second"}`}>
-                  {c.name}
-                </span>
-              </button>
-            );
-          })}
-        </div>
+        <CurrencyPicker
+          value={currency}
+          onChange={(code) => {
+            setCurrency(code);
+            toast.success(`Currency set to ${code}`);
+          }}
+        />
       </Card>
 
       {/* Privacy */}
