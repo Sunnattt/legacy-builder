@@ -2,12 +2,20 @@ import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
 import { z } from "zod";
 import { motion } from "framer-motion";
+import { Crown, Mail, Lock } from "lucide-react";
 import { Button } from "@/components/wf/Button";
 import { supabase } from "@/integrations/supabase/client";
+import { lovable } from "@/integrations/lovable";
 import { toast } from "sonner";
+import { HeroPanel, BackgroundOrbs, GoogleIcon } from "@/components/wf/AuthHero";
 
 export const Route = createFileRoute("/login")({
-  head: () => ({ meta: [{ title: "Sign in — WealthFlow" }] }),
+  head: () => ({
+    meta: [
+      { title: "Sign in — WealthFlow" },
+      { name: "description", content: "Sign in to WealthFlow to track your net worth, goals, and legacy." },
+    ],
+  }),
   component: LoginPage,
 });
 
@@ -22,6 +30,7 @@ function LoginPage() {
   const [password, setPassword] = useState("");
   const [errors, setErrors] = useState<{ email?: string; password?: string }>({});
   const [loading, setLoading] = useState(false);
+  const [googleLoading, setGoogleLoading] = useState(false);
 
   const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -39,44 +48,117 @@ function LoginPage() {
       toast.error(error.message);
       return;
     }
+    toast.success("Welcome back, sovereign 👑");
     navigate({ to: "/app" });
   };
 
+  const onGoogle = async () => {
+    setGoogleLoading(true);
+    const result = await lovable.auth.signInWithOAuth("google", {
+      redirect_uri: window.location.origin + "/app",
+    });
+    if (result.error) {
+      setGoogleLoading(false);
+      toast.error(result.error.message ?? "Google sign-in failed");
+      return;
+    }
+    if (result.redirected) return;
+    navigate({ to: "/app" });
+  };
 
   return (
-    <main className="mx-auto min-h-screen max-w-md px-6 pt-16">
-      <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}>
-        <h1 className="text-3xl font-black tracking-tight">Welcome back</h1>
-        <p className="mt-1 text-sm text-text-second">Sign in to your empire.</p>
-      </motion.div>
+    <main className="relative min-h-screen overflow-hidden bg-background">
+      <BackgroundOrbs />
+      <div className="relative mx-auto grid min-h-screen w-full max-w-6xl grid-cols-1 lg:grid-cols-2">
+        <HeroPanel />
+        <section className="flex items-center justify-center px-6 py-16 lg:px-12">
+          <motion.div
+            initial={{ opacity: 0, y: 16 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, ease: "easeOut" }}
+            className="w-full max-w-sm"
+          >
+            <div className="mb-8 flex items-center gap-2 lg:hidden">
+              <Crown className="h-5 w-5 text-gold" />
+              <span className="text-sm font-bold tracking-[0.2em] text-gold">WEALTHFLOW</span>
+            </div>
+            <h1 className="font-display text-4xl italic text-text-primary">Welcome back</h1>
+            <p className="mt-2 text-sm text-text-second">Sign in to your empire.</p>
 
-      <form onSubmit={onSubmit} className="mt-8 space-y-4">
-        <div>
-          <label className="text-[11px] font-semibold uppercase tracking-[0.16em] text-text-second">Email</label>
-          <input
-            type="email" value={email} onChange={(e) => setEmail(e.target.value)}
-            className="mt-1 w-full rounded-lg border border-border bg-surface-mid px-4 py-3 text-base text-text-primary outline-none focus:border-gold"
-            placeholder="you@empire.com"
-          />
-          {errors.email && <p className="mt-1 text-xs text-[var(--negative)]">{errors.email}</p>}
-        </div>
-        <div>
-          <label className="text-[11px] font-semibold uppercase tracking-[0.16em] text-text-second">Password</label>
-          <input
-            type="password" value={password} onChange={(e) => setPassword(e.target.value)}
-            className="mt-1 w-full rounded-lg border border-border bg-surface-mid px-4 py-3 text-base text-text-primary outline-none focus:border-gold"
-            placeholder="••••••••"
-          />
-          {errors.password && <p className="mt-1 text-xs text-[var(--negative)]">{errors.password}</p>}
-        </div>
-        <Button type="submit" variant="gold" size="lg" full disabled={loading}>
-          {loading ? "Signing in…" : "Sign in"}
-        </Button>
-      </form>
+            <div
+              className="mt-8 rounded-2xl border border-[var(--gold-dim)] p-6 shadow-card backdrop-blur-xl"
+              style={{ background: "color-mix(in oklab, var(--surface) 75%, transparent)" }}
+            >
+              <button
+                type="button"
+                onClick={onGoogle}
+                disabled={googleLoading}
+                className="flex h-12 w-full items-center justify-center gap-3 rounded-lg border border-border bg-surface-mid font-semibold text-text-primary transition-colors hover:bg-surface-high disabled:opacity-60"
+              >
+                <GoogleIcon />
+                {googleLoading ? "Redirecting…" : "Continue with Google"}
+              </button>
 
-      <p className="mt-8 text-center text-sm text-text-second">
-        New here? <Link to="/signup" className="text-gold">Create an account</Link>
-      </p>
+              <div className="my-5 flex items-center gap-3">
+                <div className="h-px flex-1 bg-border" />
+                <span className="text-[10px] font-semibold uppercase tracking-[0.18em] text-text-second">or email</span>
+                <div className="h-px flex-1 bg-border" />
+              </div>
+
+              <form onSubmit={onSubmit} className="space-y-4">
+                <FieldGroup
+                  label="Email" icon={<Mail className="h-4 w-4" />}
+                  type="email" value={email} onChange={setEmail} error={errors.email}
+                  placeholder="you@empire.com"
+                />
+                <FieldGroup
+                  label="Password" icon={<Lock className="h-4 w-4" />}
+                  type="password" value={password} onChange={setPassword} error={errors.password}
+                  placeholder="••••••••"
+                />
+                <div className="flex justify-end">
+                  <Link to="/forgot-password" className="text-xs font-semibold text-gold hover:underline">
+                    Forgot password?
+                  </Link>
+                </div>
+                <Button type="submit" variant="gold" size="lg" full disabled={loading}>
+                  {loading ? "Signing in…" : "Enter your empire"}
+                </Button>
+              </form>
+            </div>
+
+            <p className="mt-6 text-center text-sm text-text-second">
+              New here?{" "}
+              <Link to="/signup" className="font-semibold text-gold hover:underline">
+                Start your legacy
+              </Link>
+            </p>
+          </motion.div>
+        </section>
+      </div>
     </main>
+  );
+}
+
+function FieldGroup({
+  label, icon, value, onChange, error, type = "text", placeholder,
+}: {
+  label: string; icon?: React.ReactNode; value: string;
+  onChange: (v: string) => void; error?: string; type?: string; placeholder?: string;
+}) {
+  return (
+    <div>
+      <label className="text-[11px] font-semibold uppercase tracking-[0.16em] text-text-second">{label}</label>
+      <div className="relative mt-1">
+        {icon && (
+          <span className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-text-second">{icon}</span>
+        )}
+        <input
+          type={type} value={value} onChange={(e) => onChange(e.target.value)} placeholder={placeholder}
+          className={`h-12 w-full rounded-lg border bg-surface-mid text-base text-text-primary outline-none transition-colors focus:border-gold focus:shadow-[0_0_0_3px_var(--gold-glow)] ${icon ? "pl-10 pr-4" : "px-4"} ${error ? "border-[var(--negative)]" : "border-border"}`}
+        />
+      </div>
+      {error && <p className="mt-1 text-xs text-[var(--negative)]">{error}</p>}
+    </div>
   );
 }
