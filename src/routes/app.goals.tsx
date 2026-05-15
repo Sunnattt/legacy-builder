@@ -144,7 +144,12 @@ function GoalsPage() {
           <Sheet onClose={() => setSheetOpen(false)} title="New goal">
             <AddGoalForm
               onSubmit={(g) => {
-                add(g);
+                add({
+                  ...g,
+                  // Convert user-entered target into the base currency (USD)
+                  // so display can convert into any currency consistently.
+                  target_amount: convertToBase(Number(g.target_amount), currency),
+                });
                 haptic("success");
                 setSheetOpen(false);
               }}
