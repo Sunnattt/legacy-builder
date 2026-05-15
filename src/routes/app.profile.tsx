@@ -1,5 +1,6 @@
-import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
+import { Settings as SettingsIcon, ChevronRight } from "lucide-react";
 import { Button } from "@/components/wf/Button";
 import { Card } from "@/components/wf/Card";
 import { supabase } from "@/integrations/supabase/client";
@@ -12,7 +13,7 @@ export const Route = createFileRoute("/app/profile")({
 
 function Profile() {
   const navigate = useNavigate();
-  const { privacyMode, togglePrivacy, currency } = useSettingsStore();
+  const { privacyMode, togglePrivacy } = useSettingsStore();
   const [email, setEmail] = useState<string | null>(null);
   const [name, setName] = useState<string>("");
 
@@ -57,24 +58,22 @@ function Profile() {
         </div>
       </Card>
 
-      <Card className="mt-4">
-        <div className="text-sm font-semibold">Currency</div>
-          <div className="mt-1 text-xs text-text-second">Currently {currency}. Tap to switch.</div>
-          <div className="mt-3 flex flex-wrap gap-2">
-            {["USD","EUR","GBP","CAD","JPY","INR","AED"].map((c) => (
-              <button
-                key={c}
-                onClick={() => useSettingsStore.getState().setCurrency(c)}
-                className={`rounded-full border px-3 py-1 text-xs font-semibold transition-colors ${
-                  currency === c
-                    ? "border-transparent bg-gradient-gold text-[#07070E]"
-                    : "border-border bg-surface-mid text-text-second hover:text-text-primary"
-                }`}
-              >
-                {c}
-              </button>
-            ))}
+      <Card className="mt-4 p-0">
+        <Link
+          to="/app/settings"
+          className="flex items-center justify-between gap-3 p-4 transition-colors hover:bg-surface-mid"
+        >
+          <div className="flex items-center gap-3">
+            <span className="grid h-9 w-9 place-items-center rounded-full bg-[var(--gold-glow)] text-gold">
+              <SettingsIcon size={16} />
+            </span>
+            <div>
+              <div className="text-sm font-semibold text-text-primary">Settings</div>
+              <div className="text-xs text-text-second">Currency, privacy, reminders, data</div>
+            </div>
           </div>
+          <ChevronRight size={18} className="text-text-second" />
+        </Link>
       </Card>
 
       <div className="mt-8">

@@ -17,6 +17,7 @@ import { Route as AppRouteImport } from './routes/app'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AppIndexRouteImport } from './routes/app.index'
 import { Route as AuthCheckEmailRouteImport } from './routes/auth.check-email'
+import { Route as AppSettingsRouteImport } from './routes/app.settings'
 import { Route as AppProfileRouteImport } from './routes/app.profile'
 import { Route as AppGoalsRouteImport } from './routes/app.goals'
 import { Route as AppAnalyticsRouteImport } from './routes/app.analytics'
@@ -62,6 +63,11 @@ const AuthCheckEmailRoute = AuthCheckEmailRouteImport.update({
   path: '/auth/check-email',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AppSettingsRoute = AppSettingsRouteImport.update({
+  id: '/settings',
+  path: '/settings',
+  getParentRoute: () => AppRoute,
+} as any)
 const AppProfileRoute = AppProfileRouteImport.update({
   id: '/profile',
   path: '/profile',
@@ -94,6 +100,7 @@ export interface FileRoutesByFullPath {
   '/app/analytics': typeof AppAnalyticsRoute
   '/app/goals': typeof AppGoalsRoute
   '/app/profile': typeof AppProfileRoute
+  '/app/settings': typeof AppSettingsRoute
   '/auth/check-email': typeof AuthCheckEmailRoute
   '/app/': typeof AppIndexRoute
 }
@@ -107,6 +114,7 @@ export interface FileRoutesByTo {
   '/app/analytics': typeof AppAnalyticsRoute
   '/app/goals': typeof AppGoalsRoute
   '/app/profile': typeof AppProfileRoute
+  '/app/settings': typeof AppSettingsRoute
   '/auth/check-email': typeof AuthCheckEmailRoute
   '/app': typeof AppIndexRoute
 }
@@ -122,6 +130,7 @@ export interface FileRoutesById {
   '/app/analytics': typeof AppAnalyticsRoute
   '/app/goals': typeof AppGoalsRoute
   '/app/profile': typeof AppProfileRoute
+  '/app/settings': typeof AppSettingsRoute
   '/auth/check-email': typeof AuthCheckEmailRoute
   '/app/': typeof AppIndexRoute
 }
@@ -138,6 +147,7 @@ export interface FileRouteTypes {
     | '/app/analytics'
     | '/app/goals'
     | '/app/profile'
+    | '/app/settings'
     | '/auth/check-email'
     | '/app/'
   fileRoutesByTo: FileRoutesByTo
@@ -151,6 +161,7 @@ export interface FileRouteTypes {
     | '/app/analytics'
     | '/app/goals'
     | '/app/profile'
+    | '/app/settings'
     | '/auth/check-email'
     | '/app'
   id:
@@ -165,6 +176,7 @@ export interface FileRouteTypes {
     | '/app/analytics'
     | '/app/goals'
     | '/app/profile'
+    | '/app/settings'
     | '/auth/check-email'
     | '/app/'
   fileRoutesById: FileRoutesById
@@ -237,6 +249,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthCheckEmailRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/app/settings': {
+      id: '/app/settings'
+      path: '/settings'
+      fullPath: '/app/settings'
+      preLoaderRoute: typeof AppSettingsRouteImport
+      parentRoute: typeof AppRoute
+    }
     '/app/profile': {
       id: '/app/profile'
       path: '/profile'
@@ -273,6 +292,7 @@ interface AppRouteChildren {
   AppAnalyticsRoute: typeof AppAnalyticsRoute
   AppGoalsRoute: typeof AppGoalsRoute
   AppProfileRoute: typeof AppProfileRoute
+  AppSettingsRoute: typeof AppSettingsRoute
   AppIndexRoute: typeof AppIndexRoute
 }
 
@@ -281,6 +301,7 @@ const AppRouteChildren: AppRouteChildren = {
   AppAnalyticsRoute: AppAnalyticsRoute,
   AppGoalsRoute: AppGoalsRoute,
   AppProfileRoute: AppProfileRoute,
+  AppSettingsRoute: AppSettingsRoute,
   AppIndexRoute: AppIndexRoute,
 }
 
