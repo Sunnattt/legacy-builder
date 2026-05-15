@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import {
   ChevronLeft, User, DollarSign, EyeOff, Bell, Database,
-  LogOut, Crown, Trash2, Sparkles, ChevronRight,
+  LogOut, Crown, Trash2, Sparkles, ChevronRight, Search, Check,
 } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/wf/Button";
@@ -12,21 +12,12 @@ import { supabase } from "@/integrations/supabase/client";
 import { useSettingsStore } from "@/store/useSettingsStore";
 import { useTransactionStore } from "@/store/useTransactionStore";
 import { useGoalStore } from "@/store/useGoalStore";
+import { CURRENCIES } from "@/lib/currency";
 
 export const Route = createFileRoute("/app/settings")({
   head: () => ({ meta: [{ title: "Settings — WealthFlow" }] }),
   component: Settings,
 });
-
-const CURRENCIES = [
-  { code: "USD", name: "US Dollar" },
-  { code: "EUR", name: "Euro" },
-  { code: "GBP", name: "British Pound" },
-  { code: "CAD", name: "Canadian Dollar" },
-  { code: "JPY", name: "Japanese Yen" },
-  { code: "INR", name: "Indian Rupee" },
-  { code: "AED", name: "UAE Dirham" },
-];
 
 function Settings() {
   const navigate = useNavigate();
@@ -116,30 +107,13 @@ function Settings() {
         <p className="text-xs text-text-second">
           Switches every amount across the app instantly.
         </p>
-        <div className="mt-3 grid grid-cols-2 gap-2">
-          {CURRENCIES.map((c) => {
-            const active = currency === c.code;
-            return (
-              <button
-                key={c.code}
-                onClick={() => {
-                  setCurrency(c.code);
-                  toast.success(`Currency set to ${c.code}`);
-                }}
-                className={`flex items-center justify-between rounded-lg border px-3 py-2.5 text-left transition-all ${
-                  active
-                    ? "border-transparent bg-gradient-gold text-[#07070E]"
-                    : "border-border bg-surface-mid text-text-primary hover:border-[var(--gold-dim)]"
-                }`}
-              >
-                <span className="text-sm font-bold">{c.code}</span>
-                <span className={`text-[10px] ${active ? "text-[#07070E]/70" : "text-text-second"}`}>
-                  {c.name}
-                </span>
-              </button>
-            );
-          })}
-        </div>
+        <CurrencyPicker
+          value={currency}
+          onChange={(code) => {
+            setCurrency(code);
+            toast.success(`Currency set to ${code}`);
+          }}
+        />
       </Card>
 
       {/* Privacy */}
@@ -284,6 +258,69 @@ function Toggle({ on, onClick }: { on: boolean; onClick: () => void }) {
         style={{ left: on ? "calc(100% - 26px)" : 2 }}
       />
     </button>
+  );
+}
+
+function CurrencyPicker({
+  value, onChange,
+}: { value: string; onChange: (code: string) => void }) {
+  const [q, setQ] = useState("");
+  const filtered = q.trim()
+    ? CURRENCIES.filter((c) => {
+        const t = q.trim().toLowerCase();
+        return c.code.toLowerCase().includes(t) || c.name.toLowerCase().includes(t);
+      })
+    : CURRENCIES;
+  const active = CURRENCIES.find((c) => c.code === value);
+  return (
+    <div className="mt-3">
+      <div className="mb-2 flex items-center justify-between rounded-lg border border-[var(--gold-dim)] bg-[var(--gold-glow)] px-3 py-2">
+        <div className="flex items-center gap-2">
+          <span className="text-sm font-bold text-gold">{active?.symbol}</span>
+          <span className="text-sm font-semibold text-text-primary">{active?.code}</span>
+          <span className="text-[11px] text-text-second">· {active?.name}</span>
+        </div>
+        <Check size={14} className="text-gold" />
+      </div>
+      <div className="relative">
+        <Search size={14} className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-text-second" />
+        <input
+          value={q}
+          onChange={(e) => setQ(e.target.value)}
+          placeholder="Search currency or code…"
+          className="h-10 w-full rounded-lg border border-border bg-surface-mid pl-9 pr-3 text-sm text-text-primary outline-none focus:border-gold"
+        />
+      </div>
+      <div className="mt-3 max-h-72 overflow-y-auto rounded-lg border border-border">
+        {filtered.length === 0 ? (
+          <div className="p-4 text-center text-xs text-text-second">No currencies found.</div>
+        ) : (
+          filtered.map((c) => {
+            const on = c.code === value;
+            return (
+              <button
+                key={c.code}
+                onClick={() => onChange(c.code)}
+                className={`flex w-full items-center justify-between gap-3 px-3 py-2.5 text-left transition-colors ${
+                  on ? "bg-[var(--gold-glow)]" : "hover:bg-surface-mid"
+                }`}
+              >
+                <div className="flex min-w-0 items-center gap-3">
+                  <span className="grid h-7 w-9 shrink-0 place-items-center rounded-md bg-surface-mid text-xs font-bold text-gold">
+                    {c.symbol}
+                  </span>
+                  <div className="min-w-0">
+                    <div className="text-sm font-semibold text-text-primary">{c.code}</div>
+                    <div className="truncate text-[11px] text-text-second">{c.name}</div>
+                  </div>
+                </div>
+                {on && <Check size={16} className="text-gold" />}
+              </button>
+            );
+          })
+        )}
+      </div>
+    </div>
   );
 }
 
