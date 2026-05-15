@@ -5,7 +5,7 @@ import { ArrowDownRight, ArrowUpRight, Check, Landmark, TrendingUp } from "lucid
 import { useTransactionStore } from "@/store/useTransactionStore";
 import { useSettingsStore } from "@/store/useSettingsStore";
 import { CATEGORIES } from "@/lib/categories";
-import { currencySymbol, parseCurrencyInput } from "@/lib/currency";
+import { currencySymbol, parseCurrencyInput, convertToBase } from "@/lib/currency";
 import { todayISO } from "@/lib/dates";
 import { haptic } from "@/lib/haptics";
 import { Button } from "@/components/wf/Button";
