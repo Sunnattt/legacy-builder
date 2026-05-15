@@ -4,7 +4,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Plus, X, Pencil, Trash2, PiggyBank } from "lucide-react";
 import { useGoalStore } from "@/store/useGoalStore";
 import { useSettingsStore } from "@/store/useSettingsStore";
-import { formatCurrency, parseCurrencyInput } from "@/lib/currency";
+import { formatCurrency, parseCurrencyInput, convertToBase } from "@/lib/currency";
 import { daysBetween, formatShortDate } from "@/lib/dates";
 import { monthlyNeeded } from "@/lib/calculations";
 import { GOAL_MILESTONES, milestonesReached, newlyReached, progressColor } from "@/lib/milestones";
