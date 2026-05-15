@@ -59,7 +59,22 @@ function Profile() {
 
       <Card className="mt-4">
         <div className="text-sm font-semibold">Currency</div>
-        <div className="mt-1 text-xs text-text-second">Currently {currency}. Picker arrives in Phase 6.</div>
+          <div className="mt-1 text-xs text-text-second">Currently {currency}. Tap to switch.</div>
+          <div className="mt-3 flex flex-wrap gap-2">
+            {["USD","EUR","GBP","CAD","JPY","INR","AED"].map((c) => (
+              <button
+                key={c}
+                onClick={() => useSettingsStore.getState().setCurrency(c)}
+                className={`rounded-full border px-3 py-1 text-xs font-semibold transition-colors ${
+                  currency === c
+                    ? "border-transparent bg-gradient-gold text-[#07070E]"
+                    : "border-border bg-surface-mid text-text-second hover:text-text-primary"
+                }`}
+              >
+                {c}
+              </button>
+            ))}
+          </div>
       </Card>
 
       <div className="mt-8">
