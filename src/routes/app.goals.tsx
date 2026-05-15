@@ -103,7 +103,7 @@ function GoalsPage() {
               goal={g}
               currency={currency}
               privacyMode={privacyMode}
-              onAddFunds={(amt) => handleAddFunds(g, amt)}
+              onAddFunds={(amt) => handleAddFunds(g, convertToBase(amt, currency))}
               onMenu={() => setMenuId(g.id)}
             />
           ))}
