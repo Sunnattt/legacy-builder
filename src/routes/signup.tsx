@@ -7,7 +7,7 @@ import { Button } from "@/components/wf/Button";
 import { supabase } from "@/integrations/supabase/client";
 import { lovable } from "@/integrations/lovable";
 import { toast } from "sonner";
-import { HeroPanel, BackgroundOrbs } from "./login";
+import { HeroPanel, BackgroundOrbs, GoogleIcon } from "@/components/wf/AuthHero";
 
 export const Route = createFileRoute("/signup")({
   head: () => ({
