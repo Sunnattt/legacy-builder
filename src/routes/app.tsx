@@ -1,6 +1,8 @@
 import { createFileRoute, Outlet, redirect } from "@tanstack/react-router";
+import { useEffect } from "react";
 import { TabBar } from "@/components/wf/TabBar";
 import { supabase } from "@/integrations/supabase/client";
+import { useSettingsStore } from "@/store/useSettingsStore";
 
 export const Route = createFileRoute("/app")({
   // Protect every /app/* route. Runs on the client; the browser Supabase
