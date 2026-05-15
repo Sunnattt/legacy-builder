@@ -18,15 +18,7 @@ export const Route = createFileRoute("/app/settings")({
   component: Settings,
 });
 
-const CURRENCIES = [
-  { code: "USD", name: "US Dollar" },
-  { code: "EUR", name: "Euro" },
-  { code: "GBP", name: "British Pound" },
-  { code: "CAD", name: "Canadian Dollar" },
-  { code: "JPY", name: "Japanese Yen" },
-  { code: "INR", name: "Indian Rupee" },
-  { code: "AED", name: "UAE Dirham" },
-];
+import { CURRENCIES } from "@/lib/currency";
 
 function Settings() {
   const navigate = useNavigate();
