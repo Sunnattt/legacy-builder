@@ -4,7 +4,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Plus, X, Pencil, Trash2, PiggyBank } from "lucide-react";
 import { useGoalStore } from "@/store/useGoalStore";
 import { useSettingsStore } from "@/store/useSettingsStore";
-import { formatCurrency, parseCurrencyInput } from "@/lib/currency";
+import { formatCurrency, parseCurrencyInput, convertToBase } from "@/lib/currency";
 import { daysBetween, formatShortDate } from "@/lib/dates";
 import { monthlyNeeded } from "@/lib/calculations";
 import { GOAL_MILESTONES, milestonesReached, newlyReached, progressColor } from "@/lib/milestones";
@@ -103,7 +103,7 @@ function GoalsPage() {
               goal={g}
               currency={currency}
               privacyMode={privacyMode}
-              onAddFunds={(amt) => handleAddFunds(g, amt)}
+              onAddFunds={(amt) => handleAddFunds(g, convertToBase(amt, currency))}
               onMenu={() => setMenuId(g.id)}
             />
           ))}
@@ -144,7 +144,12 @@ function GoalsPage() {
           <Sheet onClose={() => setSheetOpen(false)} title="New goal">
             <AddGoalForm
               onSubmit={(g) => {
-                add(g);
+                add({
+                  ...g,
+                  // Convert user-entered target into the base currency (USD)
+                  // so display can convert into any currency consistently.
+                  target_amount: convertToBase(Number(g.target_amount), currency),
+                });
                 haptic("success");
                 setSheetOpen(false);
               }}
