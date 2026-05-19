@@ -5,17 +5,8 @@ import { motion } from "framer-motion";
 import { Crown, Mail, Lock } from "lucide-react";
 import { Button } from "@/components/wf/Button";
 import { supabase } from "@/integrations/supabase/client";
-import { lovable } from "@/integrations/lovable";
 import { toast } from "sonner";
 import { HeroPanel, BackgroundOrbs } from "@/components/wf/AuthHero";
-
-function GoogleMark() {
-  return (
-    <svg className="h-5 w-5" viewBox="0 0 24 24" aria-hidden>
-      <path fill="#EA4335" d="M12 10.2v3.9h5.5c-.24 1.4-1.7 4.1-5.5 4.1-3.3 0-6-2.7-6-6.1s2.7-6.1 6-6.1c1.9 0 3.1.8 3.8 1.5l2.6-2.5C16.7 3.4 14.6 2.4 12 2.4 6.7 2.4 2.4 6.7 2.4 12s4.3 9.6 9.6 9.6c5.5 0 9.2-3.9 9.2-9.4 0-.6-.1-1.1-.2-1.6H12z" />
-    </svg>
-  );
-}
 
 export const Route = createFileRoute("/login")({
   head: () => ({
@@ -38,7 +29,6 @@ function LoginPage() {
   const [password, setPassword] = useState("");
   const [errors, setErrors] = useState<{ email?: string; password?: string }>({});
   const [loading, setLoading] = useState(false);
-  const [googleLoading, setGoogleLoading] = useState(false);
 
   const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -57,20 +47,6 @@ function LoginPage() {
       return;
     }
     toast.success("Welcome back, sovereign 👑");
-    navigate({ to: "/app" });
-  };
-
-  const onGoogle = async () => {
-    setGoogleLoading(true);
-    const result = await lovable.auth.signInWithOAuth("google", {
-      redirect_uri: window.location.origin + "/app",
-    });
-    if (result.error) {
-      setGoogleLoading(false);
-      toast.error(result.error.message ?? "Google sign-in failed");
-      return;
-    }
-    if (result.redirected) return;
     navigate({ to: "/app" });
   };
 
@@ -97,23 +73,8 @@ function LoginPage() {
               className="mt-8 rounded-2xl border border-[var(--gold-dim)] p-6 shadow-card backdrop-blur-xl"
               style={{ background: "color-mix(in oklab, var(--surface) 75%, transparent)" }}
             >
-              <button
-                type="button"
-                onClick={onGoogle}
-                disabled={googleLoading}
-                className="flex h-12 w-full items-center justify-center gap-3 rounded-lg border border-border bg-surface-mid font-semibold text-text-primary transition-colors hover:bg-surface-high disabled:opacity-60"
-              >
-                <GoogleMark />
-                {googleLoading ? "Redirecting…" : "Continue with Google"}
-              </button>
-
-              <div className="my-5 flex items-center gap-3">
-                <div className="h-px flex-1 bg-border" />
-                <span className="text-[10px] font-semibold uppercase tracking-[0.18em] text-text-second">or email</span>
-                <div className="h-px flex-1 bg-border" />
-              </div>
-
               <form onSubmit={onSubmit} className="space-y-4">
+
                 <FieldGroup
                   label="Email" icon={<Mail className="h-4 w-4" />}
                   type="email" value={email} onChange={setEmail} error={errors.email}
