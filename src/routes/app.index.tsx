@@ -1,4 +1,4 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useMemo } from "react";
 import { motion } from "framer-motion";
 import { MoreHorizontal, Sparkles, Wallet, TrendingUp, ArrowDownRight, ArrowUpRight, Flame } from "lucide-react";
