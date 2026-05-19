@@ -29,7 +29,6 @@ function LoginPage() {
   const [password, setPassword] = useState("");
   const [errors, setErrors] = useState<{ email?: string; password?: string }>({});
   const [loading, setLoading] = useState(false);
-  const [googleLoading, setGoogleLoading] = useState(false);
 
   const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -48,20 +47,6 @@ function LoginPage() {
       return;
     }
     toast.success("Welcome back, sovereign 👑");
-    navigate({ to: "/app" });
-  };
-
-  const onGoogle = async () => {
-    setGoogleLoading(true);
-    const result = await lovable.auth.signInWithOAuth("google", {
-      redirect_uri: window.location.origin + "/app",
-    });
-    if (result.error) {
-      setGoogleLoading(false);
-      toast.error(result.error.message ?? "Google sign-in failed");
-      return;
-    }
-    if (result.redirected) return;
     navigate({ to: "/app" });
   };
 
