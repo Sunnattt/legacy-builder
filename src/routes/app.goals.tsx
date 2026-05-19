@@ -93,30 +93,60 @@ function GoalsPage() {
         </button>
       </header>
 
-      {/* Stats chips */}
-      <div className="mb-6 grid grid-cols-3 gap-2">
-        {[
-          { label: "Total", value: stats.total },
-          { label: "Active", value: stats.active },
-          { label: "Completed", value: stats.completed },
-        ].map((s) => (
-          <div key={s.label} className="rounded-xl border border-border bg-surface px-3 py-3 text-center shadow-card">
-            <div className="text-xl font-black tabular text-gradient-gold">{s.value}</div>
-            <div className="text-[10px] uppercase tracking-widest text-text-second">{s.label}</div>
-          </div>
-        ))}
+      {/* Stats chips — tap to filter */}
+      <div className="mb-5 grid grid-cols-3 gap-2">
+        {([
+          { key: "all" as const, label: "Total", value: stats.total },
+          { key: "active" as const, label: "Active", value: stats.active },
+          { key: "completed" as const, label: "Completed", value: stats.completed },
+        ]).map((s) => {
+          const active = filter === s.key;
+          return (
+            <motion.button
+              key={s.label}
+              whileTap={{ scale: 0.96 }}
+              onClick={() => { haptic("tap"); setFilter(s.key); }}
+              aria-pressed={active}
+              className={cn(
+                "rounded-xl border px-3 py-3 text-center shadow-card transition-colors",
+                active
+                  ? "border-gold bg-[var(--gold-glow)]"
+                  : "border-border bg-surface hover:border-border-mid"
+              )}
+            >
+              <div className="text-xl font-black tabular text-gradient-gold">{s.value}</div>
+              <div className={cn(
+                "text-[10px] uppercase tracking-widest",
+                active ? "text-gold" : "text-text-second"
+              )}>
+                {s.label}
+              </div>
+            </motion.button>
+          );
+        })}
       </div>
 
-      {goals.length === 0 ? (
+      {/* Filter heading */}
+      <div className="mb-4 flex items-baseline justify-between">
+        <div>
+          <h2 className="text-lg font-bold text-text-primary">{meta.title}</h2>
+          <p className="text-xs text-text-second">{meta.subtitle}</p>
+        </div>
+        <span className="tabular text-xs text-text-second">
+          {visibleGoals.length} {visibleGoals.length === 1 ? "goal" : "goals"}
+        </span>
+      </div>
+
+      {visibleGoals.length === 0 ? (
         <EmptyState
           icon="🎯"
-          title="No goals yet"
-          subtitle="Tap + to create your first financial goal."
-          action={<Button onClick={() => setSheetOpen(true)}>Create goal</Button>}
+          title={meta.emptyTitle}
+          subtitle={meta.emptySub}
+          action={filter === "all" ? <Button onClick={() => setSheetOpen(true)}>Create goal</Button> : <Button variant="outline" onClick={() => setFilter("all")}>Show all goals</Button>}
         />
       ) : (
         <div className="space-y-4">
-          {goals.map((g) => (
+          {visibleGoals.map((g) => (
             <GoalCard
               key={g.id}
               goal={g}
