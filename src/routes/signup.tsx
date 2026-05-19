@@ -47,7 +47,7 @@ function SignupPage() {
   const [password, setPassword] = useState("");
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [loading, setLoading] = useState(false);
-  const strength_unused = null;
+  
   const strength = useMemo(() => passwordStrength(password), [password]);
 
   const onSubmit = async (e: React.FormEvent) => {
