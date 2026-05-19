@@ -24,17 +24,36 @@ export const Route = createFileRoute("/app/goals")({
 const EMOJI_OPTIONS = ["🏠","🚗","🛡️","🎯","🏖️","💍","🎓","💼","🛩️","⛵","🏆","💎","🎮","📚","🍣","🐶","🌍","💰","🧘","🎁"];
 const COLOR_OPTIONS = ["#C9A84C","#28C78A","#4A8FE8","#7C5CBF","#E04545","#E6C97A"];
 
+type GoalFilter = "all" | "active" | "completed";
+
 function GoalsPage() {
   const { goals, add, update, remove } = useGoalStore();
   const { currency, privacyMode } = useSettingsStore();
   const [sheetOpen, setSheetOpen] = useState(false);
   const [confettiTick, setConfettiTick] = useState(0);
   const [menuId, setMenuId] = useState<string | null>(null);
+  const [filter, setFilter] = useState<GoalFilter>("all");
+
+  const isDone = (g: Goal) =>
+    g.is_completed || Number(g.current_amount) >= Number(g.target_amount);
 
   const stats = useMemo(() => {
-    const completed = goals.filter((g) => g.is_completed || Number(g.current_amount) >= Number(g.target_amount)).length;
+    const completed = goals.filter(isDone).length;
     return { total: goals.length, active: goals.length - completed, completed };
   }, [goals]);
+
+  const visibleGoals = useMemo(() => {
+    if (filter === "active") return goals.filter((g) => !isDone(g));
+    if (filter === "completed") return goals.filter(isDone);
+    return goals;
+  }, [goals, filter]);
+
+  const filterMeta: Record<GoalFilter, { title: string; subtitle: string; emptyTitle: string; emptySub: string }> = {
+    all: { title: "All goals", subtitle: "Every milestone on your path.", emptyTitle: "No goals yet", emptySub: "Tap + to create your first financial goal." },
+    active: { title: "Active goals", subtitle: "Still chasing the target.", emptyTitle: "No active goals", emptySub: "Every goal is complete — set a new one." },
+    completed: { title: "Completed goals", subtitle: "Wins you've already locked in.", emptyTitle: "Nothing completed yet", emptySub: "Keep contributing — your first win is close." },
+  };
+  const meta = filterMeta[filter];
 
   const handleAddFunds = (g: Goal, amount: number) => {
     if (amount <= 0) return;
@@ -74,30 +93,60 @@ function GoalsPage() {
         </button>
       </header>
 
-      {/* Stats chips */}
-      <div className="mb-6 grid grid-cols-3 gap-2">
-        {[
-          { label: "Total", value: stats.total },
-          { label: "Active", value: stats.active },
-          { label: "Completed", value: stats.completed },
-        ].map((s) => (
-          <div key={s.label} className="rounded-xl border border-border bg-surface px-3 py-3 text-center shadow-card">
-            <div className="text-xl font-black tabular text-gradient-gold">{s.value}</div>
-            <div className="text-[10px] uppercase tracking-widest text-text-second">{s.label}</div>
-          </div>
-        ))}
+      {/* Stats chips — tap to filter */}
+      <div className="mb-5 grid grid-cols-3 gap-2">
+        {([
+          { key: "all" as const, label: "Total", value: stats.total },
+          { key: "active" as const, label: "Active", value: stats.active },
+          { key: "completed" as const, label: "Completed", value: stats.completed },
+        ]).map((s) => {
+          const active = filter === s.key;
+          return (
+            <motion.button
+              key={s.label}
+              whileTap={{ scale: 0.96 }}
+              onClick={() => { haptic("tap"); setFilter(s.key); }}
+              aria-pressed={active}
+              className={cn(
+                "rounded-xl border px-3 py-3 text-center shadow-card transition-colors",
+                active
+                  ? "border-gold bg-[var(--gold-glow)]"
+                  : "border-border bg-surface hover:border-border-mid"
+              )}
+            >
+              <div className="text-xl font-black tabular text-gradient-gold">{s.value}</div>
+              <div className={cn(
+                "text-[10px] uppercase tracking-widest",
+                active ? "text-gold" : "text-text-second"
+              )}>
+                {s.label}
+              </div>
+            </motion.button>
+          );
+        })}
       </div>
 
-      {goals.length === 0 ? (
+      {/* Filter heading */}
+      <div className="mb-4 flex items-baseline justify-between">
+        <div>
+          <h2 className="text-lg font-bold text-text-primary">{meta.title}</h2>
+          <p className="text-xs text-text-second">{meta.subtitle}</p>
+        </div>
+        <span className="tabular text-xs text-text-second">
+          {visibleGoals.length} {visibleGoals.length === 1 ? "goal" : "goals"}
+        </span>
+      </div>
+
+      {visibleGoals.length === 0 ? (
         <EmptyState
           icon="🎯"
-          title="No goals yet"
-          subtitle="Tap + to create your first financial goal."
-          action={<Button onClick={() => setSheetOpen(true)}>Create goal</Button>}
+          title={meta.emptyTitle}
+          subtitle={meta.emptySub}
+          action={filter === "all" ? <Button onClick={() => setSheetOpen(true)}>Create goal</Button> : <Button variant="outline" onClick={() => setFilter("all")}>Show all goals</Button>}
         />
       ) : (
         <div className="space-y-4">
-          {goals.map((g) => (
+          {visibleGoals.map((g) => (
             <GoalCard
               key={g.id}
               goal={g}
