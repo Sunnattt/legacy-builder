@@ -103,15 +103,15 @@ export const formatCurrency = (
   const abs = Math.abs(value);
   const sym = meta.symbol;
   if (compact) {
-    if (abs >= 1_000_000) return `${sign}${value < 0 ? "-" : ""}${sym}${(abs / 1_000_000).toFixed(2)}M`;
-    if (abs >= 1_000) return `${sign}${value < 0 ? "-" : ""}${sym}${(abs / 1_000).toFixed(1)}K`;
+    if (abs >= 1_000_000) return `${sign}${value < 0 ? "-" : ""}${(abs / 1_000_000).toFixed(2)}M${sym}`;
+    if (abs >= 1_000) return `${sign}${value < 0 ? "-" : ""}${(abs / 1_000).toFixed(1)}K${sym}`;
   }
   const fd = decimals ?? (abs % 1 === 0 ? 0 : meta.decimals);
   const opt: Intl.NumberFormatOptions = {
     minimumFractionDigits: fd,
     maximumFractionDigits: decimals ?? meta.decimals,
   };
-  return `${sign}${value < 0 ? "-" : ""}${sym}${abs.toLocaleString("en-US", opt)}`;
+  return `${sign}${value < 0 ? "-" : ""}${abs.toLocaleString("en-US", opt)}${sym}`;
 };
 
 export const parseCurrencyInput = (raw: string): number => {
