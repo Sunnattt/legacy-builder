@@ -83,19 +83,6 @@ function SignupPage() {
     navigate({ to: "/app" });
   };
 
-  const onGoogle = async () => {
-    setGoogleLoading(true);
-    const result = await lovable.auth.signInWithOAuth("google", {
-      redirect_uri: window.location.origin + "/app",
-    });
-    if (result.error) {
-      setGoogleLoading(false);
-      toast.error(result.error.message ?? "Google sign-in failed");
-      return;
-    }
-    if (result.redirected) return;
-    navigate({ to: "/app" });
-  };
 
   return (
     <main className="relative min-h-screen overflow-hidden bg-background">
