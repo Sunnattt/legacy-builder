@@ -24,17 +24,36 @@ export const Route = createFileRoute("/app/goals")({
 const EMOJI_OPTIONS = ["🏠","🚗","🛡️","🎯","🏖️","💍","🎓","💼","🛩️","⛵","🏆","💎","🎮","📚","🍣","🐶","🌍","💰","🧘","🎁"];
 const COLOR_OPTIONS = ["#C9A84C","#28C78A","#4A8FE8","#7C5CBF","#E04545","#E6C97A"];
 
+type GoalFilter = "all" | "active" | "completed";
+
 function GoalsPage() {
   const { goals, add, update, remove } = useGoalStore();
   const { currency, privacyMode } = useSettingsStore();
   const [sheetOpen, setSheetOpen] = useState(false);
   const [confettiTick, setConfettiTick] = useState(0);
   const [menuId, setMenuId] = useState<string | null>(null);
+  const [filter, setFilter] = useState<GoalFilter>("all");
+
+  const isDone = (g: Goal) =>
+    g.is_completed || Number(g.current_amount) >= Number(g.target_amount);
 
   const stats = useMemo(() => {
-    const completed = goals.filter((g) => g.is_completed || Number(g.current_amount) >= Number(g.target_amount)).length;
+    const completed = goals.filter(isDone).length;
     return { total: goals.length, active: goals.length - completed, completed };
   }, [goals]);
+
+  const visibleGoals = useMemo(() => {
+    if (filter === "active") return goals.filter((g) => !isDone(g));
+    if (filter === "completed") return goals.filter(isDone);
+    return goals;
+  }, [goals, filter]);
+
+  const filterMeta: Record<GoalFilter, { title: string; subtitle: string; emptyTitle: string; emptySub: string }> = {
+    all: { title: "All goals", subtitle: "Every milestone on your path.", emptyTitle: "No goals yet", emptySub: "Tap + to create your first financial goal." },
+    active: { title: "Active goals", subtitle: "Still chasing the target.", emptyTitle: "No active goals", emptySub: "Every goal is complete — set a new one." },
+    completed: { title: "Completed goals", subtitle: "Wins you've already locked in.", emptyTitle: "Nothing completed yet", emptySub: "Keep contributing — your first win is close." },
+  };
+  const meta = filterMeta[filter];
 
   const handleAddFunds = (g: Goal, amount: number) => {
     if (amount <= 0) return;
