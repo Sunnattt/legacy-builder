@@ -107,23 +107,8 @@ function SignupPage() {
               className="mt-8 rounded-2xl border border-[var(--gold-dim)] p-6 shadow-card backdrop-blur-xl"
               style={{ background: "color-mix(in oklab, var(--surface) 75%, transparent)" }}
             >
-              <button
-                type="button"
-                onClick={onGoogle}
-                disabled={googleLoading}
-                className="flex h-12 w-full items-center justify-center gap-3 rounded-lg border border-border bg-surface-mid font-semibold text-text-primary transition-colors hover:bg-surface-high disabled:opacity-60"
-              >
-                <GoogleMark />
-                {googleLoading ? "Redirecting…" : "Continue with Google"}
-              </button>
-
-              <div className="my-5 flex items-center gap-3">
-                <div className="h-px flex-1 bg-border" />
-                <span className="text-[10px] font-semibold uppercase tracking-[0.18em] text-text-second">or email</span>
-                <div className="h-px flex-1 bg-border" />
-              </div>
-
               <form onSubmit={onSubmit} className="space-y-4">
+
                 <Field icon={<User className="h-4 w-4" />} label="Name" value={displayName} onChange={setName} error={errors.displayName} placeholder="Alex" />
                 <Field icon={<Mail className="h-4 w-4" />} label="Email" type="email" value={email} onChange={setEmail} error={errors.email} placeholder="you@empire.com" />
                 <div>
