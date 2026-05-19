@@ -1,4 +1,4 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useMemo } from "react";
 import { motion } from "framer-motion";
 import { MoreHorizontal, Sparkles, Wallet, TrendingUp, ArrowDownRight, ArrowUpRight, Flame } from "lucide-react";
@@ -25,6 +25,7 @@ export const Route = createFileRoute("/app/")({
 });
 
 function Dashboard() {
+  const navigate = useNavigate();
   const { transactions } = useTransactionStore();
   const { goals } = useGoalStore();
   const { habits } = useHabitStore();
@@ -149,17 +150,21 @@ function Dashboard() {
       </section>
 
       {/* Insight banner */}
-      <motion.section
+      <motion.button
+        type="button"
+        onClick={() => navigate({ to: sRate >= 20 ? "/app/goals" : "/app/analytics" })}
         initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }}
-        className="mb-6 flex items-start gap-3 rounded-2xl border border-[var(--gold-dim)] bg-[var(--gold-glow)] p-4"
+        whileTap={{ scale: 0.98 }}
+        className="mb-6 flex w-full items-start gap-3 rounded-2xl border border-[var(--gold-dim)] bg-[var(--gold-glow)] p-4 text-left transition-colors hover:bg-[var(--gold-glow)]/80 focus:outline-none focus:ring-2 focus:ring-gold/40"
       >
         <Sparkles size={18} className="mt-0.5 shrink-0 text-gold" />
         <div className="text-sm leading-relaxed text-text-primary">
           {sRate >= 20
-            ? <>You're saving <b>{sRate.toFixed(0)}%</b> of income — top decile territory. At this pace, your goal hits early.</>
-            : <>Lifting your savings rate by just 5% would cut years off your timeline. Tap to see how.</>}
+            ? <>You're saving <b>{sRate.toFixed(0)}%</b> of income — top decile territory. At this pace, your goal hits early. <span className="text-gold underline-offset-2 hover:underline">See goals →</span></>
+            : <>Lifting your savings rate by just 5% would cut years off your timeline. <span className="text-gold underline-offset-2 hover:underline">See how →</span></>}
         </div>
-      </motion.section>
+      </motion.button>
+
 
       {/* Recent transactions */}
       <section className="mb-6">
