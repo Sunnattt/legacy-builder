@@ -25,6 +25,7 @@ export const Route = createFileRoute("/app/")({
 });
 
 function Dashboard() {
+  const navigate = useNavigate();
   const { transactions } = useTransactionStore();
   const { goals } = useGoalStore();
   const { habits } = useHabitStore();
