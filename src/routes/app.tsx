@@ -8,6 +8,9 @@ export const Route = createFileRoute("/app")({
   // Protect every /app/* route. Runs on the client; the browser Supabase
   // client restores the session from localStorage before this resolves.
   beforeLoad: async ({ location }) => {
+    // The session lives in browser storage only, so skip the check during SSR —
+    // otherwise a refresh or direct link to /app always bounces to /login.
+    if (typeof window === "undefined") return;
     const { data } = await supabase.auth.getSession();
     if (!data.session) {
       throw redirect({
